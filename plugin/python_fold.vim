@@ -18,7 +18,7 @@ function! PythonFoldText()
   let nextline = getline(nnum)
   if nextline =~ '^\s\+"""$'
     let line = line . getline(nnum + 1)
-  elseif nextline =~ '^\s\+"""'
+  elseif nextline =~ '^\s\+u\?"""'
     let line = line . ' ' . matchstr(nextline, '"""\zs.\{-}\ze\("""\)\?$')
   elseif nextline =~ '^\s\+"[^"]\+"$'
     let line = line . ' ' . matchstr(nextline, '"\zs.*\ze"')
