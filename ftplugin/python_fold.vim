@@ -68,12 +68,12 @@ function! GetPythonFold(lnum)
     endif
 
     " Ignore empty classes and functions
-    if line =~ '^\s*\(class\|def\)\s[^#]*\<pass\>'
+    if line =~ '^\s*\(class\|\(async \)\?def\)\s[^#]*\<pass\>'
 	return "="
     endif
 
     " Classes and functions get their own folds
-    if line =~ '^\s*\(class\|def\)\s'
+    if line =~ '^\s*\(class\|\(async \)\?def\)\s'
 	return ">" . (ind / &sw + 1)
     endif
 
