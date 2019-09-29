@@ -61,9 +61,9 @@ function! GetPythonFold(lnum)
     endif
 
     " Support markers
-    if line =~ '{{{'
+    if line =~ '^\s*\(# [[[\|[[[\).*'
         return "a1"
-    elseif line =~ '}}}'
+    elseif line =~ '^\s*\(# ]]]\|]]]\).*'
         return "s1"
     endif
 
