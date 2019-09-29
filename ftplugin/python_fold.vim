@@ -11,6 +11,7 @@ setlocal foldmethod=expr
 setlocal foldexpr=GetPythonFold(v:lnum)
 setlocal foldtext=PythonFoldText()
 
+let s:is_comment_block = 0
 
 function! PythonFoldText()
     let line = getline(v:foldstart)
@@ -65,6 +66,17 @@ function! GetPythonFold(lnum)
         return "a1"
     elseif line =~ '^\s*\(# ]]]\|]]]\).*'
         return "s1"
+    endif
+
+    " Support comment block
+    if line =~ '^\s*""".*$' && line !~ '^\s*""".*"""\s*$'
+        if s:is_comment_block == 0
+            let s:is_comment_block = 1
+            return "a1"
+        else
+            let s:is_comment_block = 0
+            return "s1"
+        endif
     endif
 
     " Ignore empty classes and functions
