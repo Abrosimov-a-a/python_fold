@@ -1,9 +1,9 @@
 " Vim folding file
 " Language: Python
-" Author:   Jorrit Wiersma (foldexpr), Max Ischenko (foldtext), Robert
+" Author:   Jorrit Wiersma (foldexpr), Max Ischenko (foldtext), Robert, Anton Abrosimov
 " Ames (line counts)
-" Last Change:  2005 Jul 14
-" Version:  2.3
+" Last Change:  2019 Oct 1
+" Version:  2.4
 " Bug fix:  Drexler Christopher, Tom Schumm, Geoff Gerrietts
 
 
@@ -46,6 +46,20 @@ function! GetPythonFold(lnum)
     let line = getline(a:lnum)
     let ind  = indent(a:lnum)
 
+    " Support comment block
+    if line =~ '^\s*""".*$' && line !~ '^\s*""".*"""\s*$'
+        if s:is_comment_block == 0
+            let s:is_comment_block = 1
+            return "a1"
+        else
+            let s:is_comment_block = 0
+            return "s1"
+        endif
+    endif
+    if s:is_comment_block == 1
+        return '='
+    endif
+
     " Ignore blank lines
     if line =~ '^\s*$'
         return "="
@@ -66,17 +80,6 @@ function! GetPythonFold(lnum)
         return "a1"
     elseif line =~ '^\s*\(# ]]]\|]]]\).*'
         return "s1"
-    endif
-
-    " Support comment block
-    if line =~ '^\s*""".*$' && line !~ '^\s*""".*"""\s*$'
-        if s:is_comment_block == 0
-            let s:is_comment_block = 1
-            return "a1"
-        else
-            let s:is_comment_block = 0
-            return "s1"
-        endif
     endif
 
     " Ignore empty classes and functions
