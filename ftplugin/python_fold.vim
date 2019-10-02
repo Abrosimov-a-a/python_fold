@@ -25,8 +25,11 @@ function! PythonFoldText()
         let nextline = getline(nnum)
     else
         let nnum = nextnonblank(v:foldstart + 1)
-        let nextline =getline(nnum)
+        let nextline = getline(nnum)
     endif
+
+    " Hide variables definition
+    let line = matchstr(line, '^\s*\(class\|\(async \)\?def\)\s*\zs.*\ze(.*$')
 
     if nextline =~ '^\s\+"""$'
         let line = line . getline(nnum + 1)
