@@ -31,6 +31,12 @@ function! PythonFoldText()
     " Hide variables definition
     let line = matchstr(line, '^\s*\(class\|\(async \)\?def\)\s*\zs.*\ze(.*$')
 
+    " Multiline definitions
+    while getline(prevnonblank(nnum - 1)) !~ '^.*:$'
+        let nnum = nextnonblank(nnum + 1)
+        let nextline = getline(nnum)
+    endwhile
+
     if nextline =~ '^\s\+"""$'
         let line = line . getline(nnum + 1)
     elseif nextline =~ '^\s\+u\?"""'
