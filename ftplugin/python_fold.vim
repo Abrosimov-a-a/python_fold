@@ -11,12 +11,23 @@ setlocal foldmethod=expr
 setlocal foldexpr=GetPythonFold(v:lnum)
 setlocal foldtext=PythonFoldText()
 
-let s:is_comment_block = 0
+let b:is_comment_block = 0
+let b:is_decorated = 0
 
 function! PythonFoldText()
     let line = getline(v:foldstart)
-    let nnum = nextnonblank(v:foldstart + 1)
-    let nextline = getline(nnum)
+
+    " Hide decorators
+    if line =~ '^\s*@.*$'
+        let cnum = nextnonblank(v:foldstart + 1)
+        let line = getline(cnum)
+        let nnum = nextnonblank(cnum + 1)
+        let nextline = getline(nnum)
+    else
+        let nnum = nextnonblank(v:foldstart + 1)
+        let nextline =getline(nnum)
+    endif
+
     if nextline =~ '^\s\+"""$'
         let line = line . getline(nnum + 1)
     elseif nextline =~ '^\s\+u\?"""'
@@ -48,15 +59,15 @@ function! GetPythonFold(lnum)
 
     " Support comment block
     if line =~ '^\s*""".*$' && line !~ '^\s*""".*"""\s*$'
-        if s:is_comment_block == 0
-            let s:is_comment_block = 1
+        if b:is_comment_block == 0
+            let b:is_comment_block = 1
             return "a1"
         else
-            let s:is_comment_block = 0
+            let b:is_comment_block = 0
             return "s1"
         endif
     endif
-    if s:is_comment_block == 1
+    if b:is_comment_block == 1
         return '='
     endif
 
@@ -87,9 +98,20 @@ function! GetPythonFold(lnum)
         return "="
     endif
 
+    " Hide decorators
+    if line =~ '^\s*@.*$'
+        let b:is_decorated = 1
+        return ">" . (ind / &sw + 1)
+    endif
+
     " Classes and functions get their own folds
     if line =~ '^\s*\(class\|\(async \)\?def\)\s'
-        return ">" . (ind / &sw + 1)
+        if b:is_decorated == 1
+            let b:is_decorated = 0
+            return "="
+        else
+            return ">" . (ind / &sw + 1)
+        endif
     endif
 
     let pnum = prevnonblank(a:lnum - 1)
