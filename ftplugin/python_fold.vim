@@ -109,8 +109,12 @@ function! GetPythonFold(lnum)
 
     " Hide decorators
     if line =~ '^\s*@.*$'
-        let b:is_decorated = 1
-        return ">" . (ind / &sw + 1)
+        if b:is_decorated == 0
+            let b:is_decorated = 1
+            return ">" . (ind / &sw + 1)
+        else
+            return "="
+        endif
     endif
 
     " Classes and functions get their own folds
