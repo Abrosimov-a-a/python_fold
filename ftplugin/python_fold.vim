@@ -20,6 +20,9 @@ function! PythonFoldText()
     " Hide decorators
     if line =~ '^\s*@.*$'
         let cnum = nextnonblank(v:foldstart + 1)
+        while getline(cnum) =~ '^\s*@.*$'
+            let cnum = nextnonblank(cnum + 1)
+        endwhile
         let line = getline(cnum)
         let nnum = nextnonblank(cnum + 1)
         let nextline = getline(nnum)
