@@ -69,6 +69,11 @@ function! GetPythonFold(lnum)
     let line = getline(a:lnum)
     let ind  = indent(a:lnum)
 
+    " Ignore blank lines
+    if line =~ '^\s*$'
+        return "="
+    endif
+
     " Support comment block
     if line =~ '^\s*""".*$' && line !~ '^\s*""".*"""\s*$'
         if b:is_comment_block == 0
@@ -81,11 +86,6 @@ function! GetPythonFold(lnum)
     endif
     if b:is_comment_block == 1
         return '='
-    endif
-
-    " Ignore blank lines
-    if line =~ '^\s*$'
-        return "="
     endif
 
     " Ignore triple quoted strings
